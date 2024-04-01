@@ -34,12 +34,15 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	//implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 
 	//test
 	testImplementation 'org.assertj:assertj-core:3.20.2'
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	//Spring webClient
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 dependencyManagement {

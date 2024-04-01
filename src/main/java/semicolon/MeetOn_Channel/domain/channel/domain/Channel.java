@@ -21,13 +21,13 @@ public class Channel extends BaseTimeEntity {
 
     private String name;
 
-    @ElementCollection
-    private Set<Long> memberList = new HashSet<>();
+//    @ElementCollection
+//    private Set<Long> memberList = new HashSet<>();
 
     @Builder
-    public Channel(Long id, String name, Set<Long> memberList) {
+    public Channel(Long id, String name) {
         this.id = id;
         this.name = name;
-        this.memberList = memberList;
+//        this.memberList = memberList;
     }
 }

@@ -1,9 +1,9 @@
 server:
-  port: 8080
+  port: 8085
 
 spring:
   application:
-    name: login
+    name: channel
   datasource:
     url: jdbc:h2:tcp://localhost/~/withsafe
     username: sa

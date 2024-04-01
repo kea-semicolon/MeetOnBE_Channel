@@ -3,6 +3,7 @@ package semicolon.MeetOn_Channel.domain.channel.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import semicolon.MeetOn_Channel.domain.channel.domain.Authority;
 import semicolon.MeetOn_Channel.domain.channel.domain.Channel;
 
 public class ChannelDto {
@@ -18,5 +19,14 @@ public class ChannelDto {
                     .code(code)
                     .build();
         }
+    }
+
+    @Builder
+    @Getter
+    public static class CreateRequest {
+        private String userImage;
+        private String userNickname;
+        private Authority authority;
+        private String channelName;
     }
 }
