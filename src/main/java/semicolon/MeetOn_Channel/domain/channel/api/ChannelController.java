@@ -4,12 +4,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import semicolon.MeetOn_Channel.domain.channel.application.ChannelService;
-import semicolon.MeetOn_Channel.domain.channel.dto.ChannelDto;
-
-import java.util.List;
 
 import static semicolon.MeetOn_Channel.domain.channel.dto.ChannelDto.*;
 
@@ -61,9 +59,27 @@ public class ChannelController {
         return ResponseEntity.ok("Ok");
     }
 
+    /**
+     * 방 삭제
+     * @param request
+     * @param response
+     * @return
+     */
     @DeleteMapping
     public ResponseEntity<String> deleteChannel(HttpServletRequest request, HttpServletResponse response) {
         channelService.deleteChannel(request, response);
+        return ResponseEntity.ok("Ok");
+    }
+
+    /**
+     * 특정 유저 방 퇴출
+     * @param memberId
+     * @param request
+     * @return
+     */
+    @DeleteMapping("/{memberId}")
+    public ResponseEntity<String> kickUser(@PathVariable Long memberId, HttpServletRequest request) {
+        channelService.deleteUser(memberId, request);
         return ResponseEntity.ok("Ok");
     }
 }

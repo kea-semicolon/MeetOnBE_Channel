@@ -1,24 +1,20 @@
 package semicolon.MeetOn_Channel.domain.channel.application;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.scheduler.Schedulers;
 import semicolon.MeetOn_Channel.domain.channel.dao.ChannelRepository;
 import semicolon.MeetOn_Channel.domain.channel.domain.Authority;
 import semicolon.MeetOn_Channel.domain.channel.domain.Channel;
-import semicolon.MeetOn_Channel.domain.channel.dto.ChannelDto;
-import semicolon.MeetOn_Channel.domain.channel.dto.ChannelMemberDto;
 import semicolon.MeetOn_Channel.domain.global.exception.BusinessLogicException;
 import semicolon.MeetOn_Channel.domain.global.exception.code.ExceptionCode;
 import semicolon.MeetOn_Channel.domain.global.util.Aes256;
 import semicolon.MeetOn_Channel.domain.global.util.CookieUtil;
 
-
-import java.util.List;
 
 import static semicolon.MeetOn_Channel.domain.channel.dto.ChannelDto.*;
 import static semicolon.MeetOn_Channel.domain.channel.dto.ChannelDto.ChannelCode.*;
@@ -65,7 +61,7 @@ public class ChannelService {
         Channel channel = Channel.builder().name(createRequest.getChannelName()).build();
         Channel save = channelRepository.save(channel);
         UpdateMemberRequest updateMemberRequest =
-                updateUser(createRequest.getChannelName(), createRequest.getUserImage(), Authority.ROLE_HOST, save.getId());
+                updateMember(createRequest.getChannelName(), createRequest.getUserImage(), Authority.ROLE_HOST, save.getId());
         channelMemberService.updateMemberInfo(updateMemberRequest, request);
         cookieUtil.createCookie("channelId", save.getId().toString(), response);
     }
@@ -86,7 +82,7 @@ public class ChannelService {
             Channel channel = channelRepository.findById(channelId)
                     .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CHANNEL_NOT_FOUND));
             UpdateMemberRequest updateMemberRequest =
-                    updateUser(joinRequest.getUserNickname(), joinRequest.getUserImage(), Authority.ROLE_CLIENT, channel.getId());
+                    updateMember(joinRequest.getUserNickname(), joinRequest.getUserImage(), Authority.ROLE_CLIENT, channel.getId());
             channelMemberService.updateMemberInfo(updateMemberRequest, request);
             cookieUtil.createCookie("channelId", channel.getId().toString(), response);
         } catch (Exception e) {
@@ -99,9 +95,21 @@ public class ChannelService {
      * 다른 값도 같이 지워야 함(DB에서 해결)
      * @param response
      */
+    @Transactional
     public void deleteChannel(HttpServletRequest request, HttpServletResponse response) {
         Channel channel = findChannel(request);
+        channelMemberService.deleteChannelMember(channel.getId(), request);
         channelRepository.delete(channel);
+        cookieUtil.createCookie("channelId", "1", response);
+    }
+
+    /**
+     * 해당 채널의 특정 유저 추방
+     * 여기가 맞는지 잘 모름
+     * @param memberId
+     */
+    public void deleteUser(Long memberId, HttpServletRequest request) {
+        channelMemberService.deleteMemberInChannel(memberId, request);
     }
 
     private Channel findChannel(HttpServletRequest request) {
@@ -110,7 +118,7 @@ public class ChannelService {
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CHANNEL_NOT_FOUND));
     }
 
-    private UpdateMemberRequest updateUser(String name, String image, Authority authority, Long id) {
+    private UpdateMemberRequest updateMember(String name, String image, Authority authority, Long id) {
         return UpdateMemberRequest
                 .toUpdateMemberRequest(name, image, authority, id);
     }
