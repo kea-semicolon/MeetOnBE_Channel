@@ -43,6 +43,8 @@ dependencies {
 
 	//Spring webClient
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
 }
 
 dependencyManagement {

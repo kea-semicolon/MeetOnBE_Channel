@@ -1,6 +1,7 @@
 package semicolon.MeetOn_Channel.domain.channel.api;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ public class ChannelController {
 
     /**
      * 방 코드 확인
+     * 채널 코드는 (채널 이름 + 채널 id)를 AES256 알고리즘으로 암호화
      * @param request
      * @return
      */
@@ -30,10 +32,32 @@ public class ChannelController {
         return ResponseEntity.ok(channelService.findCode(request));
     }
 
+    /**
+     * 방 생성
+     * @param createRequest
+     * @param request
+     * @return
+     */
     @PostMapping("")
     public ResponseEntity<String> createChannel(@RequestBody CreateRequest createRequest,
-                                                HttpServletRequest request) {
-        channelService.createChannel(createRequest, request);
+                                                HttpServletRequest request,
+                                                HttpServletResponse response) {
+        channelService.createChannel(createRequest, request, response);
+        return ResponseEntity.ok("Ok");
+    }
+
+    /**
+     * 방 참가
+     * @param joinRequest
+     * @param request
+     * @param response
+     * @return
+     */
+    @PutMapping("")
+    public ResponseEntity<String> joinChannel(@RequestBody JoinRequest joinRequest,
+                                              HttpServletRequest request,
+                                              HttpServletResponse response) {
+        channelService.joinChannel(joinRequest, request, response);
         return ResponseEntity.ok("Ok");
     }
 }

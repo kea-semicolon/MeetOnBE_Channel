@@ -12,12 +12,17 @@ public class ChannelMemberDto {
         private String userNickname;
         private String userImage;
         private Authority authority;
+        private Long channelId;
 
-        public static UpdateMemberRequest toUpdateMemberRequest(String userNickname, String userImage) {
+        public static UpdateMemberRequest toUpdateMemberRequest(String userNickname,
+                                                                String userImage,
+                                                                Authority authority,
+                                                                Long channelId) {
             return UpdateMemberRequest.builder()
                     .userNickname(userNickname)
                     .userImage(userImage)
-                    .authority(Authority.ROLE_HOST)
+                    .authority(authority)
+                    .channelId(channelId)
                     .build();
         }
     }

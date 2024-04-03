@@ -32,6 +32,10 @@ spring:
 jwt:
   secret: /vUwAz/Vx78zX5/E4v6kjfbyoTRpYtOK2WT9rYcXeNPzDMuv1BlehYL113paVVYvUTyUIYg3kSZglWjEAJxgMw==
 
+jasypt:
+  encryptor:
+    key: 263d0bdda7c420e6
+
 eureka:
   client:
     fetch-registry: true

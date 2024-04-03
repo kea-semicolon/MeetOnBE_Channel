@@ -29,4 +29,13 @@ public class ChannelDto {
         private Authority authority;
         private String channelName;
     }
+
+    @Builder
+    @Getter
+    public static class JoinRequest {
+        private String userImage;
+        private String userNickname;
+        private Authority authority;
+        private String channelCode;
+    }
 }
