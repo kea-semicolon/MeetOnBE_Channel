@@ -1,5 +1,6 @@
 package semicolon.MeetOn_Channel.domain.channel.application;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import semicolon.MeetOn_Channel.domain.global.util.CookieUtil;
 import java.util.List;
 
 import static semicolon.MeetOn_Channel.domain.channel.dto.ChannelDto.*;
+import static semicolon.MeetOn_Channel.domain.channel.dto.ChannelDto.ChannelCode.*;
 import static semicolon.MeetOn_Channel.domain.channel.dto.ChannelMemberDto.*;
 
 @Slf4j
@@ -30,6 +32,7 @@ public class ChannelService {
 
     private final ChannelRepository channelRepository;
     private final ChannelMemberService channelMemberService;
+    private final CookieUtil cookieUtil;
     private final Aes256 aes256;
 
     /**
@@ -39,7 +42,7 @@ public class ChannelService {
      * @return
      */
     public ChannelCode findCode(HttpServletRequest request) {
-        Long channelId = Long.valueOf(CookieUtil.getCookieValue("channelId", request));
+        Long channelId = Long.valueOf(cookieUtil.getCookieValue("channelId", request));
         Channel channel = channelRepository.findById(channelId)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CHANNEL_NOT_FOUND));
         String channelCode = null;
@@ -49,7 +52,7 @@ public class ChannelService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return ChannelCode.toChannelCode(channelCode);
+        return toChannelCode(channelCode);
     }
 
 
@@ -64,9 +67,15 @@ public class ChannelService {
         UpdateMemberRequest updateMemberRequest =
                 updateUser(createRequest.getChannelName(), createRequest.getUserImage(), Authority.ROLE_HOST, save.getId());
         channelMemberService.updateMemberInfo(updateMemberRequest, request);
-        CookieUtil.createCookie("channelId", save.getId().toString(), response);
+        cookieUtil.createCookie("channelId", save.getId().toString(), response);
     }
 
+    /**
+     * 채널 코드를 디코딩 후 채널을 찾아 유저 주입 및 업데이트
+     * @param joinRequest
+     * @param request
+     * @param response
+     */
     @Transactional
     public void joinChannel(JoinRequest joinRequest, HttpServletRequest request, HttpServletResponse response) {
         try {
@@ -79,11 +88,26 @@ public class ChannelService {
             UpdateMemberRequest updateMemberRequest =
                     updateUser(joinRequest.getUserNickname(), joinRequest.getUserImage(), Authority.ROLE_CLIENT, channel.getId());
             channelMemberService.updateMemberInfo(updateMemberRequest, request);
-            CookieUtil.createCookie("channelId", channel.getId().toString(), response);
+            cookieUtil.createCookie("channelId", channel.getId().toString(), response);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
 
+    /**
+     * 해당 채널 삭제
+     * 다른 값도 같이 지워야 함(DB에서 해결)
+     * @param response
+     */
+    public void deleteChannel(HttpServletRequest request, HttpServletResponse response) {
+        Channel channel = findChannel(request);
+        channelRepository.delete(channel);
+    }
+
+    private Channel findChannel(HttpServletRequest request) {
+        Long channelId = Long.valueOf(cookieUtil.getCookieValue("channelId", request));
+        return channelRepository.findById(channelId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CHANNEL_NOT_FOUND));
     }
 
     private UpdateMemberRequest updateUser(String name, String image, Authority authority, Long id) {

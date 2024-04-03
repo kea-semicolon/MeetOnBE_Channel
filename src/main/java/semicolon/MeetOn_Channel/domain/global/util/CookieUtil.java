@@ -3,9 +3,11 @@ package semicolon.MeetOn_Channel.domain.global.util;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Component;
 import semicolon.MeetOn_Channel.domain.global.exception.BusinessLogicException;
 import semicolon.MeetOn_Channel.domain.global.exception.code.ExceptionCode;
 
+@Component
 public class CookieUtil {
 
     /**
@@ -14,7 +16,7 @@ public class CookieUtil {
      * @param cookieValue
      * @param response
      */
-    public static void createCookie(String cookieName, String cookieValue, HttpServletResponse response) {
+    public void createCookie(String cookieName, String cookieValue, HttpServletResponse response) {
         Cookie cookie = new Cookie(cookieName, cookieValue);
         //쿠키 속성 설정
         cookie.setHttpOnly(true);
@@ -30,8 +32,8 @@ public class CookieUtil {
      * @param request
      * @return
      */
-    public static String getCookieValue(String cookieName, HttpServletRequest request){
-        Cookie cookie = CookieUtil.getCookie(request, cookieName);
+    public String getCookieValue(String cookieName, HttpServletRequest request){
+        Cookie cookie = getCookie(request, cookieName);
         if(cookie == null){
             throw new BusinessLogicException(ExceptionCode.INVALID_REQUEST);
         }
@@ -45,7 +47,7 @@ public class CookieUtil {
      * @param name
      * @return
      */
-    public static Cookie getCookie(HttpServletRequest request, String name) {
+    public Cookie getCookie(HttpServletRequest request, String name) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
@@ -62,7 +64,7 @@ public class CookieUtil {
      * @param cookieName
      * @param response
      */
-    public static void deleteCookie(String cookieName, HttpServletResponse response) {
+    public void deleteCookie(String cookieName, HttpServletResponse response) {
         Cookie cookie = new Cookie(cookieName, null);
         cookie.setMaxAge(0); // 쿠키 만료 시간을 0으로 설정하여 삭제
         cookie.setPath("/"); // 쿠키의 유효 경로를 설정

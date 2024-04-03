@@ -23,15 +23,17 @@ import static semicolon.MeetOn_Channel.domain.channel.dto.ChannelMemberDto.*;
 public class ChannelMemberService {
 
     private final WebClient webClient;
+    private final CookieUtil cookieUtil;
 
     /**
+     * 서버 간 통신 Service
      * Member 서버에게 유저 업데이트 정보와 함께 업데이트 요청
      * @param updateMemberRequest
      * @param request
      */
     public void updateMemberInfo(UpdateMemberRequest updateMemberRequest, HttpServletRequest request){
         log.info("Member에 Patch 보내기");
-        String memberId = CookieUtil.getCookieValue("memberId", request);
+        String memberId = cookieUtil.getCookieValue("memberId", request);
         Long channelId = updateMemberRequest.getChannelId();
         String accessToken = request.getHeader("Authorization");
         log.info("memberId={}, channelId={}, accessToken={}, ", memberId, channelId, accessToken);

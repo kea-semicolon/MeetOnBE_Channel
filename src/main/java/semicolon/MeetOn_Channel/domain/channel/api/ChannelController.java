@@ -28,7 +28,7 @@ public class ChannelController {
      * @return
      */
     @GetMapping("/code")
-    public ResponseEntity<ChannelCode> channelCode(HttpServletRequest request) {
+    public ResponseEntity<ChannelCode> getChannelCode(HttpServletRequest request) {
         return ResponseEntity.ok(channelService.findCode(request));
     }
 
@@ -58,6 +58,12 @@ public class ChannelController {
                                               HttpServletRequest request,
                                               HttpServletResponse response) {
         channelService.joinChannel(joinRequest, request, response);
+        return ResponseEntity.ok("Ok");
+    }
+
+    @DeleteMapping
+    public ResponseEntity<String> deleteChannel(HttpServletRequest request, HttpServletResponse response) {
+        channelService.deleteChannel(request, response);
         return ResponseEntity.ok("Ok");
     }
 }
