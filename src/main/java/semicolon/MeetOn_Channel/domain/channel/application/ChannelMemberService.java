@@ -1,21 +1,12 @@
 package semicolon.MeetOn_Channel.domain.channel.application;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Mono;
-import semicolon.MeetOn_Channel.domain.channel.dao.ChannelRepository;
-import semicolon.MeetOn_Channel.domain.channel.domain.Channel;
-import semicolon.MeetOn_Channel.domain.channel.dto.ChannelMemberDto;
 import semicolon.MeetOn_Channel.domain.global.util.CookieUtil;
 
 import static semicolon.MeetOn_Channel.domain.channel.dto.ChannelMemberDto.*;
@@ -27,7 +18,6 @@ public class ChannelMemberService {
 
     private final WebClient webClient;
     private final CookieUtil cookieUtil;
-    private final ChannelRepository channelRepository;
 
     /**
      * 서버 간 통신 Service
@@ -59,9 +49,13 @@ public class ChannelMemberService {
     public void deleteChannelMember(Long channelId, HttpServletRequest request) {
         log.info("Channel에 속해있는 멤버 default Channel로 변경");
         String accessToken = request.getHeader("Authorization");
-        String requestUri = "http://localhost:8000/member/delete/channel/" + channelId;
+        String uri = UriComponentsBuilder
+                .fromUriString("http://localhost:8000/member/delete/channel")
+                .queryParam("channelId", channelId)
+                .toUriString();
+
         webClient.patch()
-                .uri(requestUri)
+                .uri(uri)
                 .header(HttpHeaders.AUTHORIZATION, accessToken)
                 .retrieve()
                 .toBodilessEntity()
@@ -71,9 +65,13 @@ public class ChannelMemberService {
     public void deleteMemberInChannel(Long memberId, HttpServletRequest request) {
         log.info("Channel에 속해있는 특정 멤버 default Channel로 변경");
         String accessToken = request.getHeader("Authorization");
-        String requestUri = "http://localhost:8000/member/delete/member/" + memberId;
+        String uri = UriComponentsBuilder
+                .fromUriString("http://localhost:8000/member/delelte/member")
+                .queryParam("memberId", memberId)
+                .toUriString();
+
         webClient.patch()
-                .uri(requestUri)
+                .uri(uri)
                 .header(HttpHeaders.AUTHORIZATION, accessToken)
                 .retrieve()
                 .toBodilessEntity()

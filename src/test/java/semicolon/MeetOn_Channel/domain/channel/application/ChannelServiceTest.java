@@ -2,7 +2,6 @@ package semicolon.MeetOn_Channel.domain.channel.application;
 
 import jakarta.servlet.http.Cookie;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import semicolon.MeetOn_Channel.domain.channel.dto.ChannelDto;
 import semicolon.MeetOn_Channel.domain.global.util.Aes256;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @Transactional
@@ -40,7 +38,7 @@ class ChannelServiceTest {
     @Test
     void 방_코드_찾기() {
         String codeCompare = "1XoHayZElxAI2S3AicOHCbRPn/KPXWa4/kqMK0XwVpg=";
-        MockCookie cookie = createCookie("channelId", String.valueOf(6352));
+        MockCookie cookie = createCookie(String.valueOf(6352));
         response.addCookie(cookie);
         Cookie[] cookies = response.getCookies();
         request.setCookies(cookies);
@@ -49,8 +47,8 @@ class ChannelServiceTest {
         assertThat(code.getCode()).isEqualTo(codeCompare);
     }
 
-    private MockCookie createCookie(String name, String value) {
-        MockCookie mockCookie = new MockCookie(name, value);
+    private MockCookie createCookie(String value) {
+        MockCookie mockCookie = new MockCookie("channelId", value);
         mockCookie.setPath("/");
         mockCookie.setHttpOnly(true);
         return mockCookie;
