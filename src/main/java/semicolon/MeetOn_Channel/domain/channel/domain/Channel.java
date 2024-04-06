@@ -6,17 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import semicolon.MeetOn_Channel.domain.BaseTimeEntity;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 @Getter
 @Entity
 @NoArgsConstructor
 public class Channel extends BaseTimeEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;

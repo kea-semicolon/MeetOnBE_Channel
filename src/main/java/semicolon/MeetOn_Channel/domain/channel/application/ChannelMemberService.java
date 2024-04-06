@@ -53,7 +53,7 @@ public class ChannelMemberService {
                 .fromUriString("http://localhost:8000/member/delete/channel")
                 .queryParam("channelId", channelId)
                 .toUriString();
-
+        log.info("uri={}", uri);
         webClient.patch()
                 .uri(uri)
                 .header(HttpHeaders.AUTHORIZATION, accessToken)

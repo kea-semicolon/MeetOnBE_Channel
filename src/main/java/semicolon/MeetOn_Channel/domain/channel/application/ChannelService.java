@@ -61,7 +61,7 @@ public class ChannelService {
         Channel channel = Channel.builder().name(createRequest.getChannelName()).build();
         Channel save = channelRepository.save(channel);
         UpdateMemberRequest updateMemberRequest =
-                updateMember(createRequest.getChannelName(), createRequest.getUserImage(), Authority.ROLE_HOST, save.getId());
+                updateMember(createRequest.getUserNickname(), createRequest.getUserImage(), Authority.ROLE_HOST, save.getId());
         channelMemberService.updateMemberInfo(updateMemberRequest, request);
         cookieUtil.createCookie("channelId", save.getId().toString(), response);
     }
