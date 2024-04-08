@@ -62,19 +62,19 @@ public class ChannelMemberService {
                 .block();
     }
 
-    public void deleteMemberInChannel(Long memberId, HttpServletRequest request) {
-        log.info("Channel에 속해있는 특정 멤버 default Channel로 변경");
-        String accessToken = request.getHeader("Authorization");
-        String uri = UriComponentsBuilder
-                .fromUriString("http://localhost:8000/member/delelte/member")
-                .queryParam("memberId", memberId)
-                .toUriString();
-
-        webClient.patch()
-                .uri(uri)
-                .header(HttpHeaders.AUTHORIZATION, accessToken)
-                .retrieve()
-                .toBodilessEntity()
-                .block();
-    }
+//    public void deleteMemberInChannel(Long memberId, HttpServletRequest request) {
+//        log.info("Channel에 속해있는 특정 멤버 default Channel로 변경");
+//        String accessToken = request.getHeader("Authorization");
+//        String uri = UriComponentsBuilder
+//                .fromUriString("http://localhost:8000/member/delelte/member")
+//                .queryParam("memberId", memberId)
+//                .toUriString();
+//
+//        webClient.patch()
+//                .uri(uri)
+//                .header(HttpHeaders.AUTHORIZATION, accessToken)
+//                .retrieve()
+//                .toBodilessEntity()
+//                .block();
+//    }
 }

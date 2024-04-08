@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.scheduler.Schedulers;
@@ -29,6 +30,8 @@ public class ChannelService {
     private final ChannelRepository channelRepository;
     private final ChannelMemberService channelMemberService;
     private final CookieUtil cookieUtil;
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final static String CHANNEL_MEMBER_KICK_TOPIC = "channel_member_kick_topic";
     private final Aes256 aes256;
 
     /**
@@ -105,11 +108,12 @@ public class ChannelService {
 
     /**
      * 해당 채널의 특정 유저 추방
-     * 여기가 맞는지 잘 모름
+     * Kafka로 연관 데이터 한번에 제거
      * @param memberId
      */
     public void deleteUser(Long memberId, HttpServletRequest request) {
-        channelMemberService.deleteMemberInChannel(memberId, request);
+//        channelMemberService.deleteMemberInChannel(memberId, request);
+        kafkaTemplate.send(CHANNEL_MEMBER_KICK_TOPIC, memberId.toString());
     }
 
     private Channel findChannel(HttpServletRequest request) {
