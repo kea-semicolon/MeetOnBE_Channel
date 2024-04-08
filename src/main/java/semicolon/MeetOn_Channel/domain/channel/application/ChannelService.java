@@ -32,6 +32,7 @@ public class ChannelService {
     private final CookieUtil cookieUtil;
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final static String CHANNEL_MEMBER_KICK_TOPIC = "channel_member_kick_topic";
+    private final static String CHANNEL_DELETED_TOPIC = "channel_deleted_topic";
     private final Aes256 aes256;
 
     /**
@@ -101,18 +102,19 @@ public class ChannelService {
     @Transactional
     public void deleteChannel(HttpServletRequest request, HttpServletResponse response) {
         Channel channel = findChannel(request);
-        channelMemberService.deleteChannelMember(channel.getId(), request);
+//        channelMemberService.deleteChannelMember(channel.getId(), request);
         channelRepository.delete(channel);
+        kafkaTemplate.send(CHANNEL_DELETED_TOPIC, channel.getId().toString());
         cookieUtil.createCookie("channelId", "1", response);
     }
 
     /**
      * 해당 채널의 특정 유저 추방
-     * Kafka로 연관 데이터 한번에 제거
+     * 여기가 맞는지 잘 모름
      * @param memberId
      */
-    public void deleteUser(Long memberId, HttpServletRequest request) {
-//        channelMemberService.deleteMemberInChannel(memberId, request);
+    public void deleteUser(Long memberId) {
+        //channelMemberService.deleteMemberInChannel(memberId, request);
         kafkaTemplate.send(CHANNEL_MEMBER_KICK_TOPIC, memberId.toString());
     }
 

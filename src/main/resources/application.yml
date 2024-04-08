@@ -20,6 +20,12 @@ spring:
         default-page-size: 10
         one-indexed-parameters: true
 
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+    producer:
+      bootstrap-servers: localhost:9092
+
   jpa:
     hibernate:
       ddl-auto: update

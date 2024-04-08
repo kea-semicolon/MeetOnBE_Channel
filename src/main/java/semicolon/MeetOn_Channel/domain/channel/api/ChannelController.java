@@ -74,12 +74,11 @@ public class ChannelController {
     /**
      * 특정 유저 방 퇴출
      * @param memberId
-     * @param request
      * @return
      */
     @DeleteMapping("/{memberId}")
-    public ResponseEntity<String> kickUser(@PathVariable Long memberId, HttpServletRequest request) {
-        channelService.deleteUser(memberId, request);
+    public ResponseEntity<String> kickUser(@PathVariable Long memberId) {
+        channelService.deleteUser(memberId);
         return ResponseEntity.ok("Ok");
     }
 }
