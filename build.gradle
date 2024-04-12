@@ -46,6 +46,10 @@ dependencies {
 
 	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
 	implementation 'org.springframework.kafka:spring-kafka'
+
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+//	implementation 'org.springdoc:springdoc-openapi-webflux-core:1.5.13'
+//	implementation 'org.springdoc:springdoc-openapi-webflux-ui:1.5.13'
 }
 
 dependencyManagement {

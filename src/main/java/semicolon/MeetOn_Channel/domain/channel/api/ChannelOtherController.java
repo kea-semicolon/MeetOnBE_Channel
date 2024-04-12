@@ -1,5 +1,6 @@
 package semicolon.MeetOn_Channel.domain.channel.api;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ public class ChannelOtherController {
 
     private final ChannelOtherService channelOtherService;
 
+    @Operation(description = "채널 존재 유무 내부 api Front 신경 ㄴㄴ")
     @GetMapping("/find")
     public Boolean existChannel(@RequestParam Long channelId) {
         return channelOtherService.findChannel(channelId);
