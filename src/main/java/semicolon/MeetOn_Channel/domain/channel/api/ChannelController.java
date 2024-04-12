@@ -26,7 +26,7 @@ public class ChannelController {
      * @param request
      * @return
      */
-    @Operation(description = "방 코드 확인")
+    @Operation(summary = "방 코드 확인", description = "방 코드 확인")
     @GetMapping("/code")
     public ResponseEntity<ChannelCode> getChannelCode(HttpServletRequest request) {
         return ResponseEntity.ok(channelService.findCode(request));
@@ -38,7 +38,7 @@ public class ChannelController {
      * @param request
      * @return
      */
-    @Operation(description = "방 생성")
+    @Operation(summary = "방 생성", description = "방 생성")
     @PostMapping("")
     public ResponseEntity<String> createChannel(@RequestBody CreateRequest createRequest,
                                                 HttpServletRequest request,
@@ -54,7 +54,7 @@ public class ChannelController {
      * @param response
      * @return
      */
-    @Operation(description = "방 참가")
+    @Operation(summary = "방 참가", description = "방 참가")
     @PutMapping("")
     public ResponseEntity<String> joinChannel(@RequestBody JoinRequest joinRequest,
                                               HttpServletRequest request,
@@ -69,7 +69,7 @@ public class ChannelController {
      * @param response
      * @return
      */
-    @Operation(description = "방 삭제")
+    @Operation(summary = "방 삭제", description = "방 삭제")
     @DeleteMapping
     public ResponseEntity<String> deleteChannel(HttpServletRequest request, HttpServletResponse response) {
         channelService.deleteChannel(request, response);
