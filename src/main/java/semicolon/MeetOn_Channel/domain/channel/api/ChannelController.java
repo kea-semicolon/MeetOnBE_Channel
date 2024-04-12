@@ -81,7 +81,7 @@ public class ChannelController {
      * @param memberId
      * @return
      */
-    @Operation(description = "특정 유저 방 추방")
+    @Operation(summary = "유저 추방", description = "특정 유저 방 추방")
     @DeleteMapping("/{memberId}")
     public ResponseEntity<String> kickUser(@PathVariable Long memberId) {
         channelService.deleteUser(memberId);
