@@ -1,5 +1,7 @@
 package semicolon.MeetOn_Channel.domain.channel.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -8,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import semicolon.MeetOn_Channel.domain.channel.application.ChannelService;
 
 import static semicolon.MeetOn_Channel.domain.channel.dto.ChannelDto.*;
@@ -19,6 +22,7 @@ import static semicolon.MeetOn_Channel.domain.channel.dto.ChannelDto.*;
 public class ChannelController {
 
     private final ChannelService channelService;
+    private final ObjectMapper objectMapper;
 
     /**
      * 방 코드 확인
@@ -26,7 +30,7 @@ public class ChannelController {
      * @param request
      * @return
      */
-    @Operation(summary = "방 코드 확인", description = "방 코드 확인")
+    @Operation(summary = "방 코드 확인  ", description = "방 코드 확인")
     @GetMapping("/code")
     public ResponseEntity<ChannelCode> getChannelCode(HttpServletRequest request) {
         return ResponseEntity.ok(channelService.findCode(request));
@@ -38,28 +42,43 @@ public class ChannelController {
      * @param request
      * @return
      */
-    @Operation(summary = "방 생성", description = "방 생성")
+    @Operation(summary = "방 생성 ", description = "방 생성")
     @PostMapping("")
-    public ResponseEntity<String> createChannel(@RequestBody CreateRequest createRequest,
+    public ResponseEntity<String> createChannel(@RequestPart("userImage") MultipartFile userImage,
+                                                @RequestPart("userInfo") String userInfoJson,
                                                 HttpServletRequest request,
-                                                HttpServletResponse response) {
-        channelService.createChannel(createRequest, request, response);
+                                                HttpServletResponse response) throws JsonProcessingException {
+        CreateRequest createRequest = objectMapper.readValue(userInfoJson, CreateRequest.class);
+        channelService.createChannel(userImage, createRequest, request, response);
         return ResponseEntity.ok("Ok");
     }
+//    @Operation(summary = "방 생성 ", description = "방 생성")
+//    @PostMapping("")
+//    public ResponseEntity<String> createChannel(@RequestBody CreateRequest createRequest,
+//                                                HttpServletRequest request,
+//                                                HttpServletResponse response) {
+//        channelService.createChannel(createRequest, request, response);
+//        return ResponseEntity.ok("Ok");
+//    }
 
     /**
      * 방 참가
-     * @param joinRequest
+     * @param userImage
+     * @param userInfoJson
      * @param request
      * @param response
      * @return
+     * @throws JsonProcessingException
      */
     @Operation(summary = "방 참가", description = "방 참가")
     @PutMapping("")
-    public ResponseEntity<String> joinChannel(@RequestBody JoinRequest joinRequest,
+    public ResponseEntity<String> joinChannel(@RequestPart("userImage") MultipartFile userImage,
+                                              @RequestPart("userInfo") String userInfoJson,
                                               HttpServletRequest request,
-                                              HttpServletResponse response) {
-        channelService.joinChannel(joinRequest, request, response);
+                                              HttpServletResponse response) throws JsonProcessingException {
+        JoinRequest joinRequest = objectMapper.readValue(userInfoJson, JoinRequest.class);
+        log.info("test={}", joinRequest.getChannelCode());
+        channelService.joinChannel(userImage, joinRequest, request, response);
         return ResponseEntity.ok("Ok");
     }
 

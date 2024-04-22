@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import reactor.core.scheduler.Schedulers;
 import semicolon.MeetOn_Channel.domain.channel.dao.ChannelRepository;
 import semicolon.MeetOn_Channel.domain.channel.domain.Authority;
@@ -16,6 +17,8 @@ import semicolon.MeetOn_Channel.domain.global.exception.code.ExceptionCode;
 import semicolon.MeetOn_Channel.domain.global.util.Aes256;
 import semicolon.MeetOn_Channel.domain.global.util.CookieUtil;
 
+
+import java.io.IOException;
 
 import static semicolon.MeetOn_Channel.domain.channel.dto.ChannelDto.*;
 import static semicolon.MeetOn_Channel.domain.channel.dto.ChannelDto.ChannelCode.*;
@@ -29,6 +32,7 @@ public class ChannelService {
 
     private final ChannelRepository channelRepository;
     private final ChannelMemberService channelMemberService;
+    private final ChannelS3UploadService channelS3UploadService;
     private final CookieUtil cookieUtil;
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final static String CHANNEL_MEMBER_KICK_TOPIC = "channel_member_kick_topic";
@@ -61,11 +65,20 @@ public class ChannelService {
      * @param createRequest
      */
     @Transactional
-    public void createChannel(CreateRequest createRequest, HttpServletRequest request, HttpServletResponse response) {
+    public void createChannel(MultipartFile userImage, CreateRequest createRequest, HttpServletRequest request, HttpServletResponse response) {
         Channel channel = Channel.builder().name(createRequest.getChannelName()).build();
         Channel save = channelRepository.save(channel);
-        UpdateMemberRequest updateMemberRequest =
-                updateMember(createRequest.getUserNickname(), createRequest.getUserImage(), Authority.ROLE_HOST, save.getId());
+        UpdateMemberRequest updateMemberRequest;
+        String image = null;
+        if (userImage != null) {
+            try {
+                image = channelS3UploadService.saveFile(userImage);
+            } catch (IOException e) {
+                throw new RuntimeException("이미지 업로드 에러");
+            }
+        }
+        updateMemberRequest = UpdateMemberRequest
+                .toUpdateMemberRequest(createRequest.getUserNickname(), image, createRequest.getAuthority(), save.getId());
         channelMemberService.updateMemberInfo(updateMemberRequest, request);
         cookieUtil.createCookie("channelId", save.getId().toString(), response);
     }
@@ -77,16 +90,23 @@ public class ChannelService {
      * @param response
      */
     @Transactional
-    public void joinChannel(JoinRequest joinRequest, HttpServletRequest request, HttpServletResponse response) {
+    public void joinChannel(MultipartFile userImage, JoinRequest joinRequest, HttpServletRequest request, HttpServletResponse response) {
         try {
             String channelCode = aes256.decrypt(joinRequest.getChannelCode());
             int i = channelCode.indexOf(" ");
             Long channelId = Long.valueOf(channelCode.substring(0, i));
-            log.info("channelId={}", channelId);
+            String image = null;
+            if (userImage != null) {
+                try {
+                    image = channelS3UploadService.saveFile(userImage);
+                } catch (IOException e) {
+                    throw new RuntimeException("이미지 업로드 에러");
+                }
+            }
             Channel channel = channelRepository.findById(channelId)
                     .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CHANNEL_NOT_FOUND));
             UpdateMemberRequest updateMemberRequest =
-                    updateMember(joinRequest.getUserNickname(), joinRequest.getUserImage(), Authority.ROLE_CLIENT, channel.getId());
+                    updateMember(joinRequest.getUserNickname(), image, Authority.ROLE_CLIENT, channel.getId());
             channelMemberService.updateMemberInfo(updateMemberRequest, request);
             cookieUtil.createCookie("channelId", channel.getId().toString(), response);
         } catch (Exception e) {

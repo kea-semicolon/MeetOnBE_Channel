@@ -3,6 +3,7 @@ package semicolon.MeetOn_Channel.domain.channel.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 import semicolon.MeetOn_Channel.domain.channel.domain.Authority;
 import semicolon.MeetOn_Channel.domain.channel.domain.Channel;
 
@@ -24,7 +25,7 @@ public class ChannelDto {
     @Builder
     @Getter
     public static class CreateRequest {
-        private String userImage;
+        private MultipartFile userImage;
         private String userNickname;
         private Authority authority;
         private String channelName;
@@ -33,7 +34,7 @@ public class ChannelDto {
     @Builder
     @Getter
     public static class JoinRequest {
-        private String userImage;
+        private MultipartFile userImage;
         private String userNickname;
         private Authority authority;
         private String channelCode;

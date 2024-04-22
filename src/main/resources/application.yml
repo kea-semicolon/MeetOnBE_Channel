@@ -42,6 +42,19 @@ spring:
 jwt:
   secret: /vUwAz/Vx78zX5/E4v6kjfbyoTRpYtOK2WT9rYcXeNPzDMuv1BlehYL113paVVYvUTyUIYg3kSZglWjEAJxgMw==
 
+cloud:
+  aws:
+    s3:
+      bucket: bbang-test-bucket
+    credentials:
+      access-key: AKIA6ODU3C5NYTW7XB7F
+      secret-key: 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
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+
 jasypt:
   encryptor:
     key: 263d0bdda7c420e6
