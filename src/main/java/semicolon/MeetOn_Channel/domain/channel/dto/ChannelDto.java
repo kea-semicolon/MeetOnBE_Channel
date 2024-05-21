@@ -24,7 +24,6 @@ public class ChannelDto {
     @Builder
     @Getter
     public static class CreateRequest {
-        private String userImage;
         private String userNickname;
         private Authority authority;
         private String channelName;
@@ -33,7 +32,6 @@ public class ChannelDto {
     @Builder
     @Getter
     public static class JoinRequest {
-        private String userImage;
         private String userNickname;
         private Authority authority;
         private String channelCode;

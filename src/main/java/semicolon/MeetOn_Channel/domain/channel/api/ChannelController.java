@@ -50,7 +50,7 @@ public class ChannelController {
      * @param response
      * @return
      */
-    @PutMapping("")
+    @PatchMapping("")
     public ResponseEntity<Long> joinChannel(@RequestBody JoinRequest joinRequest,
                                               HttpServletRequest request,
                                               HttpServletResponse response) {

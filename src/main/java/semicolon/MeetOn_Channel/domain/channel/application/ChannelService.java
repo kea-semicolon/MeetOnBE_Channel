@@ -55,7 +55,6 @@ public class ChannelService {
         return toChannelCode(channelCode);
     }
 
-
     /**
      * 채널 생성 및 유저 정보 업데이트
      * @param createRequest
@@ -65,9 +64,9 @@ public class ChannelService {
         Channel channel = Channel.builder().name(createRequest.getChannelName()).build();
         Channel save = channelRepository.save(channel);
         UpdateMemberRequest updateMemberRequest =
-                updateMember(createRequest.getUserNickname(), createRequest.getUserImage(), Authority.ROLE_HOST, save.getId());
+                updateMember(createRequest.getUserNickname(), Authority.ROLE_HOST, save.getId());
         channelMemberService.updateMemberInfo(updateMemberRequest, request);
-        //cookieUtil.createCookie("channelId", save.getId().toString(), response);
+        cookieUtil.createCookie("channelId", save.getId().toString(), response);
         return save.getId();
     }
 
@@ -83,13 +82,12 @@ public class ChannelService {
             String channelCode = aes256.decrypt(joinRequest.getChannelCode());
             int i = channelCode.indexOf(" ");
             Long channelId = Long.valueOf(channelCode.substring(0, i));
-            log.info("channelId={}", channelId);
             Channel channel = channelRepository.findById(channelId)
                     .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CHANNEL_NOT_FOUND));
             UpdateMemberRequest updateMemberRequest =
-                    updateMember(joinRequest.getUserNickname(), joinRequest.getUserImage(), Authority.ROLE_CLIENT, channel.getId());
+                    updateMember(joinRequest.getUserNickname(), Authority.ROLE_CLIENT, channel.getId());
             channelMemberService.updateMemberInfo(updateMemberRequest, request);
-            //cookieUtil.createCookie("channelId", channel.getId().toString(), response);
+            cookieUtil.createCookie("channelId", channel.getId().toString(), response);
             return channel.getId();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -127,8 +125,8 @@ public class ChannelService {
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CHANNEL_NOT_FOUND));
     }
 
-    private UpdateMemberRequest updateMember(String name, String image, Authority authority, Long id) {
+    private UpdateMemberRequest updateMember(String name, Authority authority, Long id) {
         return UpdateMemberRequest
-                .toUpdateMemberRequest(name, image, authority, id);
+                .toUpdateMemberRequest(name, authority, id);
     }
 }
