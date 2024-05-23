@@ -47,7 +47,7 @@ public class ChannelService {
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CHANNEL_NOT_FOUND));
         String channelCode = null;
         try {
-            channelCode = channelId + " " + channel.getName();
+            channelCode = "인생 존망";
             //channelCode = aes256.encrypt( channelId + " " + channel.getName());
             //log.info("decrypt_code={}", aes256.decrypt(channelCode));
         } catch (Exception e) {
