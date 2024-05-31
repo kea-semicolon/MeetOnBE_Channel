@@ -1,5 +1,6 @@
 package semicolon.MeetOn_Channel.domain.global.jwt;
 
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import semicolon.MeetOn.domain.member.domain.Authority;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -30,16 +30,6 @@ public class JwtTokenProvider {
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
-    }
-
-    //토큰 생성
-    public String generate(String subject, Date expiredAt) {
-        return Jwts.builder()
-                .setSubject(subject)
-                .claim(AUTHORITIES_KEY, Authority.ROLE_CLIENT)
-                .setExpiration(expiredAt)
-                .signWith(key, SignatureAlgorithm.HS512)
-                .compact();
     }
 
     public String extractSubject(String accessToken) {
