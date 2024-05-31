@@ -24,7 +24,6 @@ public class JwtFilter extends OncePerRequestFilter {
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if(StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)){
-            log.info("Token is valid");
             return bearerToken.substring(7);
         }
         return null;
@@ -35,6 +34,7 @@ public class JwtFilter extends OncePerRequestFilter {
                                     @NotNull FilterChain filterChain) throws ServletException, IOException {
         String jwt = resolveToken(request);
         if(StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)){
+            log.info("Token is valid");
             Authentication authentication = jwtTokenProvider.getAuthentication(jwt);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
