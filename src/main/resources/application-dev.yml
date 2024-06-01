@@ -1,0 +1,33 @@
+app:
+  gateway:
+    url: http://172.16.212.76:8000
+
+spring:
+  application:
+    name: channel
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://172.16.212.76/meeton?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true
+    username: root
+    password: '1918'
+
+  kafka:
+    consumer:
+      bootstrap-servers: 172.16.212.76:9092
+    producer:
+      bootstrap-servers: 172.16.212.76:9092
+
+openapi:
+  service:
+    url: http://172.16.212.76:8000
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://172.16.212.76:8761/eureka
+
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    hostname: 172.16.212.76

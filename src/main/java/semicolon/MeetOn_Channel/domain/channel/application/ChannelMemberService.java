@@ -3,6 +3,7 @@ package semicolon.MeetOn_Channel.domain.channel.application;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -18,7 +19,8 @@ public class ChannelMemberService {
 
     private final WebClient webClient;
     private final CookieUtil cookieUtil;
-
+    @Value("${app.gateway.url}")
+    private String gateway;
     /**
      * 서버 간 통신 Service
      * Member 서버에게 유저 업데이트 정보와 함께 업데이트 요청
@@ -32,7 +34,7 @@ public class ChannelMemberService {
         String accessToken = request.getHeader("Authorization");
         log.info("memberId={}, channelId={}, accessToken={}, ", memberId, channelId, accessToken);
         String uri = UriComponentsBuilder
-                .fromUriString("http://172.16.212.76:8000/member/update")
+                .fromUriString(gateway + "/member/update")
                 .queryParam("memberId", memberId)
                 .queryParam("channelId", channelId)
                 .toUriString();
@@ -50,7 +52,7 @@ public class ChannelMemberService {
         log.info("Channel에 속해있는 멤버 default Channel로 변경");
         String accessToken = request.getHeader("Authorization");
         String uri = UriComponentsBuilder
-                .fromUriString("http://172.16.212.76:8000/member/delete/channel")
+                .fromUriString(gateway + "/member/delete/channel")
                 .queryParam("channelId", channelId)
                 .toUriString();
         log.info("uri={}", uri);
