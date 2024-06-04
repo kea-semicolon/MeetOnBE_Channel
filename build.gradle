@@ -71,6 +71,11 @@ dependencies {
 
 	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
 	implementation 'org.springframework.kafka:spring-kafka'
+
+	//스프링 클라우드 유레카
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+	//쿠버네티스
+	implementation 'org.springframework.cloud:spring-cloud-starter-kubernetes-client'
 }
 
 dependencyManagement {

@@ -11,6 +11,16 @@ spring:
     username: ${db 유저}
     password: ${db 암호}
 
+  cloud:
+    kubernetes:
+      discovery:
+        enabled: true
+      config:
+        enabled: true
+      secrets:
+        enabled: true
+
+
   kafka:
     consumer:
       bootstrap-servers: ${카프카 서버 주소}:9092
@@ -21,13 +31,13 @@ openapi:
   service:
     url: http://${서버 주소}:8000
 
-eureka:
-  client:
-    fetch-registry: true
-    register-with-eureka: true
-    service-url:
-      defaultZone: http://${유레카? 서버 주소}:8761/eureka
-
-  instance:
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-    hostname: ${서버 주소}
+#eureka:
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultZone: http://${유레카? 서버 주소}:8761/eureka
+#
+#  instance:
+#    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+#    hostname: ${서버 주소}
