@@ -24,11 +24,11 @@ spring:
     include: oauth
 
 jwt:
-  secret: /vUwAz/Vx78zX5/E4v6kjfbyoTRpYtOK2WT9rYcXeNPzDMuv1BlehYL113paVVYvUTyUIYg3kSZglWjEAJxgMw==
+  secret: ${JWT_SECRET_KEY}
 
 jasypt:
   encryptor:
-    key: 263d0bdda7c420e6
+    key: ${ACE_256_KEY}
 
 springdoc:
   api-docs:

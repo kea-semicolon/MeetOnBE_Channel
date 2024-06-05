@@ -20,7 +20,6 @@ spring:
       secrets:
         enabled: true
 
-
   kafka:
     consumer:
       bootstrap-servers: ${카프카 서버 주소}:9092
