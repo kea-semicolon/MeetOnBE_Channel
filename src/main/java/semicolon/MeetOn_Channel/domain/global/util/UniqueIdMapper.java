@@ -8,10 +8,9 @@ import java.util.Map;
 @Component
 public class UniqueIdMapper {
     private final Map<String, String> storage = new HashMap<>();
-    private final ShortCodeGenerator codeGenerator = new ShortCodeGenerator();
 
     public String generateAndStore(String originalData) {
-        String shortId = codeGenerator.generate();
+        String shortId = SHA256HashGenerator.generateHash(originalData);
         storage.put(shortId, originalData);
         return shortId;
     }
