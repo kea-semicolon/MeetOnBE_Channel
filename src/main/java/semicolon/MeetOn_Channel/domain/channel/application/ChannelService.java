@@ -15,6 +15,7 @@ import semicolon.MeetOn_Channel.domain.global.exception.BusinessLogicException;
 import semicolon.MeetOn_Channel.domain.global.exception.code.ExceptionCode;
 import semicolon.MeetOn_Channel.domain.global.util.Aes256;
 import semicolon.MeetOn_Channel.domain.global.util.CookieUtil;
+import semicolon.MeetOn_Channel.domain.global.util.UniqueIdMapper;
 
 
 import static semicolon.MeetOn_Channel.domain.channel.dto.ChannelDto.*;
@@ -33,7 +34,8 @@ public class ChannelService {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final static String CHANNEL_MEMBER_KICK_TOPIC = "channel_member_kick_topic";
     private final static String CHANNEL_DELETED_TOPIC = "channel_deleted_topic";
-    private final Aes256 aes256;
+    private final UniqueIdMapper uniqueIdMapper;
+
 
     /**
      * 방 코드 확인
@@ -47,8 +49,10 @@ public class ChannelService {
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CHANNEL_NOT_FOUND));
         String channelCode = null;
         try {
-            channelCode = aes256.encrypt( channelId + " " + channel.getName());
-            log.info("decrypt_code={}", aes256.decrypt(channelCode));
+            channelCode = uniqueIdMapper.generateAndStore(channelId + " " + channel.getName());
+            log.info("decrypt_code={} encrypt_code={}", uniqueIdMapper.getOriginal(channelCode), channelCode);
+//            channelCode = aes256.encrypt( channelId + " " + channel.getName());
+//            log.info("decrypt_code={}", aes256.decrypt(channelCode));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -79,7 +83,7 @@ public class ChannelService {
     @Transactional
     public Long joinChannel(JoinRequest joinRequest, HttpServletRequest request, HttpServletResponse response) {
         try {
-            String channelCode = aes256.decrypt(joinRequest.getChannelCode());
+            String channelCode = uniqueIdMapper.getOriginal(joinRequest.getChannelCode());
             int i = channelCode.indexOf(" ");
             Long channelId = Long.valueOf(channelCode.substring(0, i));
             Channel channel = channelRepository.findById(channelId)
