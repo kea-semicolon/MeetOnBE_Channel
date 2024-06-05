@@ -14,7 +14,7 @@ jib {
 		tags = ['latest']
 	}
 	container {
-		jvmFlags = ['-Dspring.profiles.active=prod']
+		jvmFlags = ['-Dspring.profiles.active=dev']
 		//jvmFlags = ["-Xms128m", "-Xmx128m"]
 	}
 }

@@ -18,9 +18,9 @@ WORKDIR /app
 COPY --from=build /app/build/libs/*.jar /app/app.jar
 
 ## JVM 플래그 및 애플리케이션 실행
-#CMD ["java", "-Dspring.profiles.active=prod", "-jar", "/app/app.jar"]
+CMD ["java", "-Dspring.profiles.active=prod", "-jar", "/app/app.jar"]
 # JVM 플래그 및 애플리케이션 실행
-CMD ["java", "-jar", "/app/app.jar"]
+#CMD ["java", "-jar", "/app/app.jar"]
 
 # 필요시 주석 처리된 jvmFlags 사용
 # CMD ["java", "-Dspring.profiles.active=prod", "-Xms128m", "-Xmx128m", "-jar", "/app/app.jar"]
