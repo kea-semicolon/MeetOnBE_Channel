@@ -1,15 +1,16 @@
 app:
   gateway:
-    url: ${게이트웨이 주소}
+    url: ${SERVER_URL}
 
 spring:
   application:
     name: channel
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${db 주소}
-    username: ${db 유저}
-    password: ${db 암호}
+    url: ${RDS_URL}
+    username: ${RDS_USERNAME}
+    password: ${RDS_PASSWORD}
 
   cloud:
     kubernetes:
@@ -22,13 +23,13 @@ spring:
 
   kafka:
     consumer:
-      bootstrap-servers: ${카프카 서버 주소}:9092
+      bootstrap-servers: ${KAFKA_SERVER_URL}
     producer:
-      bootstrap-servers: ${카프카 서버 주소}:9092
+      bootstrap-servers: ${KAFKA_SERVER_URL}
 
 openapi:
   service:
-    url: http://${서버 주소}:8000
+    url: ${SERVER_URL}
 
 eureka:
   client:
