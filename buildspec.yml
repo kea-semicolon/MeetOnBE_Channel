@@ -1,0 +1,43 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - |
+        curl -o kubectl \
+        https://dl.k8s.io/release/v1.29.0/bin/linux/amd64/kubectl \
+        && chmod +x ./kubectl \
+        && mv ./kubectl /usr/local/bin/kubectl \
+        && mkdir ~/.kube \
+        && aws eks update-kubeconfig --region $AWS_DEFAULT_REGION --name meeton-cluster \
+        && git config --global credential.helper '!aws codecommit credential-helper $@' \
+        && git config --global credential.UseHttpPath true
+
+  pre_build:
+    commands:
+      - |
+        echo Logging in to Amazon ECR... \
+        && aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+
+  build:
+    commands:
+      - |
+        echo Building the Docker image \
+        && DATE=$(date '+%Y%m%d%H%M%S') \
+        && docker build --build-arg RDS_PASSWORD=$RDS_PASSWORD --build-arg RDS_URL=$RDS_URL --build-arg RDS_USERNAME=$RDS_USERNAME --build-arg KAFKA_SERVER_URL=$KAFKA_SERVER_URL --build-arg SERVER_URL=$SERVER_URL -t $IMAGE_REPO_NAME:$IMAGE_TAG$DATE . \
+        && docker tag $IMAGE_REPO_NAME:$IMAGE_TAG$DATE $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG$DATE \
+        && docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG$DATE
+
+  post_build:
+    commands:
+      - |
+        AWS_ECR_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG$DATE \
+        && echo Build completed on $DATE \
+        && git clone https://git-codecommit.$AWS_DEFAULT_REGION.amazonaws.com/v1/repos/$OPS_REPO_NAME \
+        && cd $OPS_REPO_NAME \
+        && sed -i "s|image: .*|image: $AWS_ECR_URI|" backend/services/$SERVICE_NAME/deployment.yaml \
+        && git config --global user.email $GIT_USER_EMAIL \
+        && git config --global user.name $GIT_USER_NAME \
+        && git add . \
+        && git commit -m "update image tag $DATE" \
+        && git push
