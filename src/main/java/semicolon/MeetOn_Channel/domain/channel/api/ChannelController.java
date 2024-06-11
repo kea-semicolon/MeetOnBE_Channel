@@ -75,7 +75,7 @@ public class ChannelController {
      * @param memberId
      * @return
      */
-    @DeleteMapping()
+    @DeleteMapping("/kick")
     public ResponseEntity<String> kickUser(@RequestParam Long memberId) {
         channelService.deleteUser(memberId);
         return ResponseEntity.ok("Ok");
